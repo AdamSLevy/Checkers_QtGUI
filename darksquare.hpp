@@ -21,9 +21,9 @@ class DarkSquare : public QGraphicsObject
 
     protected:
         void mousePressEvent(QGraphicsSceneMouseEvent *event);
-//        void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
-//        void dragLeaveEvent(QGraphicsSceneDragDropEvent *event);
-//        void dropEvent(QGraphicsSceneDragDropEvent *event);
+        void dragEnterEvent(QGraphicsSceneDragDropEvent *event);
+        void dragLeaveEvent(QGraphicsSceneDragDropEvent *event);
+        void dropEvent(QGraphicsSceneDragDropEvent *event);
 
     signals:
 

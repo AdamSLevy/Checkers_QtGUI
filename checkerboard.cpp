@@ -4,7 +4,7 @@ CheckerBoard::CheckerBoard(QGraphicsItem *parent)
     : QGraphicsObject(parent)
 {
     setFlag(ItemHasNoContents);
-    for(int i = 63; i >= 0; i--){
+    for(int i = 0; i <= 63; i++){
         if(i % 2 == (i/8) % 2){
             QGraphicsObject * square = new DarkSquare(this, i/8, (i%8)/2, i/2);
             square->setPos(position(i));
@@ -12,16 +12,14 @@ CheckerBoard::CheckerBoard(QGraphicsItem *parent)
         }
     }
 
-    for(int i = 63; i >= 0; i--){
+    for(int i = 0; i < 64; i++){
         if(i % 2 == (i/8) % 2){
             QGraphicsItem * piece;
             if(i < 2*12){
-                piece = new Piece(this);
-                piece->setPos(position(i));
+                piece = new Piece(dark_squares[i/2]);
                 red_pieces.push_back(piece);
             } else if(i > 2*(32-12)-1){
-                piece = new Piece(this, BLK);
-                piece->setPos(position(i));
+                piece = new Piece(dark_squares[i/2], BLK);
                 blk_pieces.push_back(piece);
             }
         }

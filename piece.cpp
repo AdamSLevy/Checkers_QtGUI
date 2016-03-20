@@ -10,7 +10,7 @@ Piece::Piece(QGraphicsItem *parent, bool color)
 
 QRectF Piece::boundingRect() const
 {
-    return QRectF(SQUARE_RECT);
+    return QRectF(CIRCLE_RECT);
 }
 
 void Piece::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -44,49 +44,54 @@ void Piece::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 void Piece::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event)
-    if (m_movable){
+    if (m_movable && !m_selected){
         setCursor(Qt::ClosedHandCursor);
         m_selected = true;
-        update();
+    } else{
+        m_selected = false;
     }
+    update();
 }
 
 void Piece::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event)
-//    if (QLineF(event->screenPos(), event->buttonDownScreenPos(Qt::LeftButton))
-//        .length() < QApplication::startDragDistance()) {
-//        return;
-//    }
+    if (!m_movable || QLineF(event->screenPos(), event->buttonDownScreenPos(Qt::LeftButton))
+        .length() < QApplication::startDragDistance()) {
+        return;
+    }
+    m_selected = true;
+    update();
 
-//    QObject * sender = (QObject *)event->widget();
-//    QDrag *drag = new QDrag(sender);
-//    QMimeData *mime = new QMimeData;
-//    drag->setMimeData(mime);
+    QObject * sender = (QObject *)event->widget();
+    QDrag *drag = new QDrag(sender);
+    QMimeData *mime = new QMimeData;
+    drag->setMimeData(mime);
 
-//    QPixmap pix(this->boundingRect().size().toSize());
-////    QPixmap pix;
-//    QPainter painter(&pix);
-//    painter.setTransform(QTransform::fromScale(4,4));
-//    painter.setRenderHint(QPainter::Antialiasing);
-//    paint(&painter, 0, 0);
-//    painter.end();
+    QSize rect = this->boundingRect().size().toSize();
+    QPixmap pixmap(rect);
+    pixmap.fill(Qt::white);
 
-//    pix.setMask(pix.createHeuristicMask());
+    QPainter painter(&pixmap);
+    painter.translate(30, 30);
+    painter.setRenderHint(QPainter::Antialiasing);
+    paint(&painter, 0, 0);
+    painter.end();
 
-//    drag->setPixmap(pix);
-//    drag->setHotSpot(this->boundingRect().bottomLeft().toPoint());
-////    drag->setHotSpot();
-//    drag->exec();
-//    setCursor(Qt::OpenHandCursor);
+    pixmap.setMask(pixmap.createHeuristicMask());
+
+    drag->setPixmap(pixmap);
+    drag->setHotSpot(QPoint(rect.width()/2, rect.height()/2));
+    drag->exec();
+    setCursor(Qt::OpenHandCursor);
+    m_selected = false;
+    update();
 }
 
 void Piece::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event)
-    if(m_selected){
-        m_selected = false;
-        setCursor(Qt::OpenHandCursor);
-        update();
-    }
+    qDebug() << "release";
+    setCursor(Qt::OpenHandCursor);
+    update();
 }

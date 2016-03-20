@@ -1,6 +1,7 @@
 #ifndef PIECE_HPP
 #define PIECE_HPP
 
+#include <QDebug>
 #include <QGraphicsItem>
 #include <QPainter>
 #include <QCursor>
