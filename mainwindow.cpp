@@ -11,7 +11,7 @@ MainWindow::MainWindow(QWidget *parent) :
     scene = new QGraphicsScene(this);
     board = new CheckerBoard;
 //    board->setTransform(QTransform::fromScale(2,2),true);
-    board->setTransform(QTransform::fromScale(6,6),true);
+//    board->setTransform(QTransform::fromScale(6,6),true);
     scene->addItem(board);
 
     ui->graphicsView->setScene(scene);

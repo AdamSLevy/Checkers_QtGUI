@@ -41,15 +41,15 @@ void CheckerBoard::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     Q_UNUSED(painter);
     Q_UNUSED(option);
     Q_UNUSED(widget);
-    for(QGraphicsItem * piece : blk_pieces){
-        piece->update();
-    }
-    for(QGraphicsItem * piece : red_pieces){
-        piece->update();
-    }
-    for(QGraphicsItem * square : dark_squares){
-        square->update();
-    }
+//    for(QGraphicsItem * piece : blk_pieces){
+//        piece->update();
+//    }
+//    for(QGraphicsItem * piece : red_pieces){
+//        piece->update();
+//    }
+//    for(QGraphicsItem * square : dark_squares){
+//        square->update();
+//    }
 }
 
 QPointF CheckerBoard::position(size_t i)
@@ -57,8 +57,8 @@ QPointF CheckerBoard::position(size_t i)
     size_t row = i/8;
     size_t col = i%8;
     QPointF pos;
-    pos.setX(-4 * SQUARE_SIZE +     col * SQUARE_SIZE);
-    pos.setY(-4 * SQUARE_SIZE + (7-row) * SQUARE_SIZE);
+    pos.setX(    col * SQUARE_SIZE);
+    pos.setY((7-row) * SQUARE_SIZE);
     return pos;
 }
 
