@@ -16,14 +16,12 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     checkerboard.cpp \
     darksquare.cpp \
-    piece.cpp \
-    lightsquare.cpp
+    piece.cpp
 
-HEADERS  += mainwindow.h \
-    checkerboard.h \
-    darksquare.h \
+HEADERS  += mainwindow.hpp \
+    checkerboard.hpp \
+    darksquare.hpp \
     piece.hpp \
-    lightsquare.hpp \
     squaresizes.hpp
 
 FORMS    += mainwindow.ui

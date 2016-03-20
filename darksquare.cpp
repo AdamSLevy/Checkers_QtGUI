@@ -1,7 +1,7 @@
-#include "darksquare.h"
+#include "darksquare.hpp"
 
-DarkSquare::DarkSquare(QGraphicsItem *parent)
-    : QGraphicsObject(parent), m_piece(0), dragOver(false)
+DarkSquare::DarkSquare(QGraphicsItem *parent, size_t row, size_t col, size_t id)
+    : QGraphicsObject(parent), m_row(row), m_col(col), m_id(id), m_piece(0), dragOver(false)
 {
     setAcceptDrops(true);
 }
@@ -18,9 +18,11 @@ void DarkSquare::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
     QBrush squareBrush;
     QPen pen;
-    pen.setColor(Qt::white);
-    squareBrush.setStyle(Qt::LinearGradientPattern);
-    QColor color = QColor(DARK_SQUARE_COLOR);
+    pen.setColor(Qt::black);
+    pen.setCapStyle(Qt::SquareCap);
+    pen.setJoinStyle(Qt::MiterJoin);
+    squareBrush.setStyle(Qt::SolidPattern);
+    QColor color = QColor(Qt::black);//QColor(DARK_SQUARE_COLOR);
     squareBrush.setColor(dragOver ? color.light(100) : color);
     painter->setPen(pen);
     painter->setBrush(squareBrush);
@@ -43,28 +45,32 @@ void DarkSquare::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 //            QRect textRect(CIRCLE_RECT);
 //            painter->drawText(textRect, "K");
 //        }
-//    }
+    //    }
 }
 
-void DarkSquare::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
+void DarkSquare::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    if(m_piece == 0){
-        event->setAccepted(true);
-        dragOver = true;
-    }
-    update();
-
+    qDebug() << QString("Row: %1, Col: %2, ID: %3").arg(m_row).arg(m_col).arg(m_id);
 }
 
-void DarkSquare::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
-{
-    Q_UNUSED(event);
-    dragOver = false;
-    update();
-}
+//void DarkSquare::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
+//{
+////    if(m_piece == 0){
+////        event->setAccepted(true);
+////        dragOver = true;
+////    }
+//    update();
+//}
 
-void DarkSquare::dropEvent(QGraphicsSceneDragDropEvent *event)
-{
-    dragOver = false;
-    update();
-}
+//void DarkSquare::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
+//{
+//    Q_UNUSED(event);
+////    dragOver = false;
+//    update();
+//}
+
+//void DarkSquare::dropEvent(QGraphicsSceneDragDropEvent *event)
+//{
+////    dragOver = false;
+//    update();
+//}

@@ -1,18 +1,18 @@
 #ifndef PIECE_HPP
 #define PIECE_HPP
 
-#include <QGraphicsObject>
-#include <QGraphicsScene>
+#include <QGraphicsItem>
 #include <QPainter>
 #include <QCursor>
+#include <QBitmap>
+#include <QDrag>
+#include <QMimeData>
+#include <QGraphicsSceneMouseEvent>
+#include <QApplication>
 
-#define CIRCLE_RADIUS 8
-#define CIRCLE_RECT -CIRCLE_RADIUS/2,CIRCLE_RADIUS/2,CIRCLE_RADIUS,CIRCLE_RADIUS
+#include "squaresizes.hpp"
 
-#define RED 0
-#define BLK 1
-
-class Piece : public QGraphicsObject
+class Piece : public QGraphicsItem
 {
     public:
         Piece(QGraphicsItem *parent = 0, bool color = RED);
@@ -20,9 +20,10 @@ class Piece : public QGraphicsObject
         QRectF boundingRect() const;
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     protected:
-        void mousePressEvent(QGraphicsSceneDragDropEvent *event);
-        void mouseMoveEvent(QGraphicsSceneDragDropEvent *event);
-        void mouseReleaseEvent(QGraphicsSceneDragDropEvent *event);
+        void mousePressEvent(QGraphicsSceneMouseEvent *event);
+        void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
+//        void dragMoveEvent(QGraphicsSceneMoveEvent *event);
+        void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
     signals:
 
@@ -30,9 +31,8 @@ class Piece : public QGraphicsObject
 
     private:
         bool m_color;
-        size_t m_piece;
-        bool   m_king;
-        bool dragOver;
+        bool m_selected;
+        bool m_movable;
 };
 
 #endif // PIECE_HPP

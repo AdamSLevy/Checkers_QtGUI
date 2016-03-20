@@ -2,6 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QGraphicsScene>
+
+#include "checkerboard.hpp"
 
 namespace Ui {
 class MainWindow;
@@ -17,6 +20,9 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+    QGraphicsScene * scene;
+    CheckerBoard * board;
 };
 
 #endif // MAINWINDOW_H

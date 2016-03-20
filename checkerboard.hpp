@@ -2,20 +2,32 @@
 #define CHECKERBOARD_H
 
 #include <QGraphicsObject>
+#include <QVector>
 
-#include "darksquare.h"
-#include "lightsquare.hpp"
+#include "darksquare.hpp"
+#include "piece.hpp"
 
 
 class CheckerBoard : public QGraphicsObject
 {
-public:
-    CheckerBoard();
-    DarkSquare dark_squares[32];
+    public:
+        CheckerBoard(QGraphicsItem *parent = 0);
 
-signals:
+        QRectF boundingRect() const;
+        void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
-public slots:
+    signals:
+
+    public slots:
+
+    private:
+        QVector<QGraphicsObject *>  dark_squares;
+
+        QVector<QGraphicsItem *> red_pieces;
+        QVector<QGraphicsItem *> blk_pieces;
+
+        QPointF position(size_t i);
+
 };
 
 #endif // CHECKERBOARD_H
