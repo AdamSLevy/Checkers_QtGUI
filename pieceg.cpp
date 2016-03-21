@@ -1,6 +1,6 @@
-#include "piece.hpp"
+#include "pieceg.hpp"
 
-Piece::Piece(QGraphicsItem *parent, size_t squareID, bool color, bool king)
+PieceG::PieceG(QGraphicsItem *parent, size_t squareID, bool color, bool king)
  : QGraphicsObject(parent), m_squareID(squareID), m_color(color), m_king(king), m_selected(false), m_movable(false)
 {
 //    setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemSendsScenePositionChanges);
@@ -8,12 +8,12 @@ Piece::Piece(QGraphicsItem *parent, size_t squareID, bool color, bool king)
     setAcceptedMouseButtons(Qt::LeftButton);
 }
 
-QRectF Piece::boundingRect() const
+QRectF PieceG::boundingRect() const
 {
     return QRectF(CIRCLE_RECT);
 }
 
-void Piece::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void PieceG::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(option)
     Q_UNUSED(widget)
@@ -41,7 +41,7 @@ void Piece::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     }
 }
 
-void Piece::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void PieceG::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event)
     if (m_movable){
@@ -52,7 +52,7 @@ void Piece::mousePressEvent(QGraphicsSceneMouseEvent *event)
     }
 }
 
-void Piece::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void PieceG::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event)
     if (!m_movable || QLineF(event->screenPos(), event->buttonDownScreenPos(Qt::LeftButton))
@@ -88,14 +88,14 @@ void Piece::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     deselect();
 }
 
-void Piece::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void PieceG::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event)
     setCursor(Qt::OpenHandCursor);
     update();
 }
 
-void Piece::deselect()
+void PieceG::deselect()
 {
     if(m_selected){
         m_selected = false;
@@ -103,7 +103,7 @@ void Piece::deselect()
     }
 }
 
-void Piece::setMovable(bool movable)
+void PieceG::setMovable(bool movable)
 {
     m_movable = movable;
     if(m_movable){
@@ -113,14 +113,14 @@ void Piece::setMovable(bool movable)
     }
 }
 
-void Piece::setSquareID(size_t squareID)
+void PieceG::setSquareID(size_t squareID)
 {
     if(squareID < NO_POS){
         m_squareID = squareID;
     }
 }
 
-void Piece::setKing()
+void PieceG::setKing()
 {
     if(!m_king){
         m_king = true;
@@ -128,7 +128,7 @@ void Piece::setKing()
     }
 }
 
-void Piece::select()
+void PieceG::select()
 {
     if(!m_selected){
         emit selected(m_squareID);

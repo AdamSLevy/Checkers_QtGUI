@@ -16,11 +16,11 @@
 
 #define NO_POS 32
 
-class Piece : public QGraphicsObject
+class PieceG : public QGraphicsObject
 {
     Q_OBJECT
     public:
-        Piece(QGraphicsItem *parent = 0, size_t squareID = NO_POS, bool color = RED, bool king = false);
+        PieceG(QGraphicsItem *parent = 0, size_t squareID = NO_POS, bool color = RED, bool king = false);
 
         QRectF boundingRect() const;
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);

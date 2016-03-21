@@ -5,7 +5,7 @@
 #include <QVector>
 
 #include "darksquare.hpp"
-#include "piece.hpp"
+#include "pieceg.hpp"
 #include "checkers/checkerboard.hpp"
 
 class CheckerBoardGUI : public QGraphicsObject
@@ -22,19 +22,19 @@ class CheckerBoardGUI : public QGraphicsObject
         void handleSquareSelected(size_t selectedSquare);
         void handlePieceSelected(size_t selected);
         void deselectAll();
+        void setBoard(BitBoard bb);
 
     private:
         QVector<DarkSquare *>  dark_squares;
 
-        QVector<Piece *> red_pieces;
-        QVector<Piece *> blk_pieces;
+        QVector<PieceG *> red_pieces;
+        QVector<PieceG *> blk_pieces;
 
         QPointF position(size_t i);
 
         size_t m_selectedPiece;
 
         CheckerBoard m_cb;
-
 };
 
 #endif // CHECKERBOARD_H
