@@ -6,6 +6,7 @@
 
 #include "darksquare.hpp"
 #include "piece.hpp"
+#include "checkers/checkerboard.hpp"
 
 class CheckerBoardGUI : public QGraphicsObject
 {
@@ -31,6 +32,8 @@ class CheckerBoardGUI : public QGraphicsObject
         QPointF position(size_t i);
 
         size_t m_selectedPiece;
+
+        CheckerBoard m_cb;
 
 };
 

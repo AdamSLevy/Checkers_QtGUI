@@ -16,12 +16,22 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     darksquare.cpp \
     piece.cpp \
-    checkerboardgui.cpp
+    checkerboardgui.cpp \
+    checkers/checkerboard.cpp \
+    checkers/ffnn.cpp \
+    checkers/main.cpp \
+    checkers/minimax.cpp \
+    checkers/timing.cpp
 
 HEADERS  += mainwindow.hpp \
     darksquare.hpp \
     piece.hpp \
     squaresizes.hpp \
-    checkerboardgui.hpp
+    checkerboardgui.hpp \
+    checkers/bit_mask_init.h \
+    checkers/checkerboard.hpp \
+    checkers/ffnn.hpp \
+    checkers/minimax.hpp \
+    checkers/ThrowAssert.hpp
 
 FORMS    += mainwindow.ui
