@@ -1,7 +1,7 @@
 #include "darksquare.hpp"
 
 DarkSquare::DarkSquare(QGraphicsItem *parent, size_t row, size_t col, size_t id)
-    : QGraphicsObject(parent), m_row(row), m_col(col), m_id(id), m_piece(0), dragOver(false)
+    : QGraphicsObject(parent), m_row(row), m_col(col), m_id(id), m_piece(0), m_selected(false), m_open(false)
 {
     setAcceptDrops(true);
 }
@@ -23,7 +23,7 @@ void DarkSquare::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     pen.setJoinStyle(Qt::MiterJoin);
     squareBrush.setStyle(Qt::SolidPattern);
     QColor color = QColor(Qt::black);//QColor(DARK_SQUARE_COLOR);
-    if (dragOver){
+    if (m_selected){
         color.setAlpha(150);
     }
     squareBrush.setColor(color);
@@ -35,27 +35,55 @@ void DarkSquare::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
 
 void DarkSquare::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    qDebug() << QString("Row: %1, Col: %2, ID: %3").arg(m_row).arg(m_col).arg(m_id);
+//    qDebug() << QString("Row: %1, Col: %2, ID: %3").arg(m_row).arg(m_col).arg(m_id);
+    Q_UNUSED(event)
+    if(m_open){
+        emit selected(m_id);
+    }
 }
 
 void DarkSquare::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
-    if(m_piece == 0){
+    if(m_open){
         event->setAccepted(true);
-        dragOver = true;
+        m_selected = true;
         update();
     }
 }
 
 void DarkSquare::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)
 {
-    Q_UNUSED(event);
-    dragOver = false;
-    update();
+    Q_UNUSED(event)
+    deselect();
 }
 
 void DarkSquare::dropEvent(QGraphicsSceneDragDropEvent *event)
 {
-    dragOver = false;
-    update();
+    Q_UNUSED(event)
+    if(m_open){
+        emit selected(m_id);
+    }
+    deselect();
+}
+
+void DarkSquare::deselect()
+{
+    if(m_selected){
+        m_selected = false;
+        update();
+    }
+}
+
+void DarkSquare::setOpen(bool open)
+{
+    m_open = open;
+}
+
+void DarkSquare::select()
+{
+    if(!m_selected){
+        emit selected(m_id);
+        m_selected = true;
+        update();
+    }
 }

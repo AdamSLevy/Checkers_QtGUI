@@ -14,14 +14,14 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    checkerboard.cpp \
     darksquare.cpp \
-    piece.cpp
+    piece.cpp \
+    checkerboardgui.cpp
 
 HEADERS  += mainwindow.hpp \
-    checkerboard.hpp \
     darksquare.hpp \
     piece.hpp \
-    squaresizes.hpp
+    squaresizes.hpp \
+    checkerboardgui.hpp
 
 FORMS    += mainwindow.ui

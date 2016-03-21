@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QGraphicsScene>
 
-#include "checkerboard.hpp"
+#include "checkerboardgui.hpp"
 
 namespace Ui {
 class MainWindow;

@@ -1,10 +1,10 @@
 #include "piece.hpp"
 
-Piece::Piece(QGraphicsItem *parent, bool color)
- : QGraphicsItem(parent), m_color(color), m_movable(true)
+Piece::Piece(QGraphicsItem *parent, size_t squareID, bool color, bool king)
+ : QGraphicsObject(parent), m_squareID(squareID), m_color(color), m_king(king), m_selected(false), m_movable(false)
 {
-    setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemSendsScenePositionChanges);
-    setCursor(Qt::OpenHandCursor);
+//    setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemSendsScenePositionChanges);
+//    setCursor(Qt::OpenHandCursor);
     setAcceptedMouseButtons(Qt::LeftButton);
 }
 
@@ -35,22 +35,21 @@ void Piece::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
     painter->setPen(pen);
     QPoint center(0,0);
     painter->drawEllipse(center, CIRCLE_RADIUS, CIRCLE_RADIUS);
-//    if(m_king){
-//        QRect textRect(CIRCLE_RECT);
-//        painter->drawText(textRect, "K");
-//    }
+    if(m_king){
+        QRect textRect(CIRCLE_RECT);
+        painter->drawText(textRect, "K");
+    }
 }
 
 void Piece::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event)
-    if (m_movable && !m_selected){
+    if (m_movable){
         setCursor(Qt::ClosedHandCursor);
-        m_selected = true;
+        select();
     } else{
-        m_selected = false;
+        deselect();
     }
-    update();
 }
 
 void Piece::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
@@ -60,12 +59,13 @@ void Piece::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         .length() < QApplication::startDragDistance()) {
         return;
     }
-    m_selected = true;
-    update();
+
+    select();
 
     QObject * sender = (QObject *)event->widget();
     QDrag *drag = new QDrag(sender);
     QMimeData *mime = new QMimeData;
+//    mime->setData("");
     drag->setMimeData(mime);
 
     QSize rect = this->boundingRect().size().toSize();
@@ -83,15 +83,56 @@ void Piece::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     drag->setPixmap(pixmap);
     drag->setHotSpot(QPoint(rect.width()/2, rect.height()/2));
     drag->exec();
+
     setCursor(Qt::OpenHandCursor);
-    m_selected = false;
-    update();
+    deselect();
 }
 
 void Piece::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event)
-    qDebug() << "release";
     setCursor(Qt::OpenHandCursor);
     update();
+}
+
+void Piece::deselect()
+{
+    if(m_selected){
+        m_selected = false;
+        update();
+    }
+}
+
+void Piece::setMovable(bool movable)
+{
+    m_movable = movable;
+    if(m_movable){
+        setCursor(Qt::OpenHandCursor);
+    } else{
+        setCursor(Qt::ArrowCursor);
+    }
+}
+
+void Piece::setSquareID(size_t squareID)
+{
+    if(squareID < NO_POS){
+        m_squareID = squareID;
+    }
+}
+
+void Piece::setKing()
+{
+    if(!m_king){
+        m_king = true;
+        update();
+    }
+}
+
+void Piece::select()
+{
+    if(!m_selected){
+        emit selected(m_squareID);
+        m_selected = true;
+        update();
+    }
 }

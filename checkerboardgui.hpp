@@ -7,7 +7,6 @@
 #include "darksquare.hpp"
 #include "piece.hpp"
 
-
 class CheckerBoardGUI : public QGraphicsObject
 {
     public:
@@ -19,14 +18,19 @@ class CheckerBoardGUI : public QGraphicsObject
     signals:
 
     public slots:
+        void handleSquareSelected(size_t selectedSquare);
+        void handlePieceSelected(size_t selected);
+        void deselectAll();
 
     private:
-        QVector<QGraphicsObject *>  dark_squares;
+        QVector<DarkSquare *>  dark_squares;
 
-        QVector<QGraphicsItem *> red_pieces;
-        QVector<QGraphicsItem *> blk_pieces;
+        QVector<Piece *> red_pieces;
+        QVector<Piece *> blk_pieces;
 
         QPointF position(size_t i);
+
+        size_t m_selectedPiece;
 
 };
 
