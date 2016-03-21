@@ -23,7 +23,10 @@ void DarkSquare::paint(QPainter *painter, const QStyleOptionGraphicsItem *option
     pen.setJoinStyle(Qt::MiterJoin);
     squareBrush.setStyle(Qt::SolidPattern);
     QColor color = QColor(Qt::black);//QColor(DARK_SQUARE_COLOR);
-    squareBrush.setColor(dragOver ? color.light(150) : color);
+    if (dragOver){
+        color.setAlpha(150);
+    }
+    squareBrush.setColor(color);
     painter->setPen(pen);
     painter->setBrush(squareBrush);
     painter->drawRect(SQUARE_RECT);
@@ -40,8 +43,8 @@ void DarkSquare::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
     if(m_piece == 0){
         event->setAccepted(true);
         dragOver = true;
+        update();
     }
-    update();
 }
 
 void DarkSquare::dragLeaveEvent(QGraphicsSceneDragDropEvent *event)

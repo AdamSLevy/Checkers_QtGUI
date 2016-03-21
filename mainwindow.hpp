@@ -22,7 +22,7 @@ private:
     Ui::MainWindow *ui;
 
     QGraphicsScene * scene;
-    CheckerBoard * board;
+    CheckerBoardGUI * board;
 };
 
 #endif // MAINWINDOW_H

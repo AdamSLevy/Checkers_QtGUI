@@ -9,7 +9,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 //    QRectF sceneRect = ui->graphicsView->rect();
     scene = new QGraphicsScene(this);
-    board = new CheckerBoard;
+    board = new CheckerBoardGUI;
 //    board->setTransform(QTransform::fromScale(2,2),true);
 //    board->setTransform(QTransform::fromScale(6,6),true);
     scene->addItem(board);

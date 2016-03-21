@@ -1,6 +1,6 @@
 #include "checkerboard.hpp"
 
-CheckerBoard::CheckerBoard(QGraphicsItem *parent)
+CheckerBoardGUI::CheckerBoardGUI(QGraphicsItem *parent)
     : QGraphicsObject(parent)
 {
     setFlag(ItemHasNoContents);
@@ -26,7 +26,7 @@ CheckerBoard::CheckerBoard(QGraphicsItem *parent)
     }
 }
 
-QRectF CheckerBoard::boundingRect() const
+QRectF CheckerBoardGUI::boundingRect() const
 {
 //    QSizeF rectSize = light_squares.first()->boundingRect().size();
 //    return QRectF(-4 * rectSize.width(), -4 * rectSize.height(), 8 * rectSize.width(), 8 * rectSize.height());
@@ -34,23 +34,14 @@ QRectF CheckerBoard::boundingRect() const
     return QRectF();
 }
 
-void CheckerBoard::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void CheckerBoardGUI::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     Q_UNUSED(painter);
     Q_UNUSED(option);
     Q_UNUSED(widget);
-//    for(QGraphicsItem * piece : blk_pieces){
-//        piece->update();
-//    }
-//    for(QGraphicsItem * piece : red_pieces){
-//        piece->update();
-//    }
-//    for(QGraphicsItem * square : dark_squares){
-//        square->update();
-//    }
 }
 
-QPointF CheckerBoard::position(size_t i)
+QPointF CheckerBoardGUI::position(size_t i)
 {
     size_t row = i/8;
     size_t col = i%8;

@@ -8,10 +8,10 @@
 #include "piece.hpp"
 
 
-class CheckerBoard : public QGraphicsObject
+class CheckerBoardGUI : public QGraphicsObject
 {
     public:
-        CheckerBoard(QGraphicsItem *parent = 0);
+        CheckerBoardGUI(QGraphicsItem *parent = 0);
 
         QRectF boundingRect() const;
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
