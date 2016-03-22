@@ -28,12 +28,12 @@ CheckerBoardGUI::CheckerBoardGUI(QGraphicsItem *parent)
     for(size_t i = 0; i < 32; i++){
         PieceG * piece;
         if(i < 12){
-            size_t id = m_pieces.size();
-            piece = new PieceG(m_darkSquares[i], id);
+            size_t pieceID = m_pieces.size();
+            piece = new PieceG(m_darkSquares[i], pieceID, i);
             m_pieces.push_back(piece);
         } else if(i > (32-12)-1){
-            size_t id = m_pieces.size();
-            piece = new PieceG(m_darkSquares[i], id, BLK);
+            size_t pieceID = m_pieces.size();
+            piece = new PieceG(m_darkSquares[i], pieceID, i, BLK);
             m_pieces.push_back(piece);
         }
     }

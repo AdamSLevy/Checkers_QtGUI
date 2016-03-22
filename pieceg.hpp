@@ -20,20 +20,26 @@ class PieceG : public QGraphicsObject
 {
     Q_OBJECT
     public:
-        PieceG(QGraphicsItem *parent = 0, size_t squareID = NO_POS, bool color = RED, bool king = false);
+        PieceG(QGraphicsItem *parent = 0,
+               size_t squareID = NO_POS,
+               size_t pieceID = NO_POS,
+               bool color = RED,
+               bool king = false);
 
         QRectF boundingRect() const;
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
-
+        size_t getPieceID();
+        size_t getSquareID();
+        bool getColor();
+        bool isKing();
 
     protected:
         void mousePressEvent(QGraphicsSceneMouseEvent *event);
         void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-//        void dragMoveEvent(QGraphicsSceneMoveEvent *event);
         void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
     signals:
-        void selected(size_t square_id);
+        void selected(size_t piece_id);
 
     public slots:
         void deselect();
@@ -43,6 +49,7 @@ class PieceG : public QGraphicsObject
 
     private:
         size_t m_squareID;
+        size_t m_pieceID;
         bool m_color;
         bool m_king;
 

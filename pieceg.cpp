@@ -1,7 +1,13 @@
 #include "pieceg.hpp"
 
-PieceG::PieceG(QGraphicsItem *parent, size_t squareID, bool color, bool king)
- : QGraphicsObject(parent), m_squareID(squareID), m_color(color), m_king(king), m_selected(false), m_movable(false)
+PieceG::PieceG(QGraphicsItem *parent, size_t squareID, size_t pieceID, bool color, bool king)
+ : QGraphicsObject(parent),
+   m_squareID(squareID),
+   m_pieceID(pieceID),
+   m_color(color),
+   m_king(king),
+   m_selected(false),
+   m_movable(false)
 {
 //    setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemSendsScenePositionChanges);
 //    setCursor(Qt::OpenHandCursor);
@@ -39,6 +45,26 @@ void PieceG::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
         QRect textRect(CIRCLE_RECT);
         painter->drawText(textRect, "K");
     }
+}
+
+size_t PieceG::getPieceID()
+{
+    return m_pieceID;
+}
+
+size_t PieceG::getSquareID()
+{
+    return m_squareID;
+}
+
+bool PieceG::getColor()
+{
+    return m_color;
+}
+
+bool PieceG::isKing()
+{
+    return m_king;
 }
 
 void PieceG::mousePressEvent(QGraphicsSceneMouseEvent *event)
@@ -133,7 +159,7 @@ void PieceG::setKing()
 void PieceG::select()
 {
     if(!m_selected){
-        emit selected(m_squareID);
+        emit selected(m_pieceID);
         m_selected = true;
         update();
     }
