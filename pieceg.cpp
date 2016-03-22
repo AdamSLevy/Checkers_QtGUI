@@ -45,10 +45,12 @@ void PieceG::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event)
     if (m_movable){
-        setCursor(Qt::ClosedHandCursor);
-        select();
-    } else{
-        deselect();
+        if(m_selected){
+            deselect();
+        } else{
+            setCursor(Qt::ClosedHandCursor);
+            select();
+        }
     }
 }
 

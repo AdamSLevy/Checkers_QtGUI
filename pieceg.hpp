@@ -14,7 +14,7 @@
 
 #include "squaresizes.hpp"
 
-#define NO_POS 32
+#define NO_POS std::numeric_limits<size_t>::max()
 
 class PieceG : public QGraphicsObject
 {
