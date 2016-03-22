@@ -25,10 +25,9 @@ class CheckerBoardGUI : public QGraphicsObject
         void setBoard(BitBoard bb);
 
     private:
-        QVector<DarkSquare *>  dark_squares;
+        QVector<DarkSquare *>  m_darkSquares;
 
-        QVector<PieceG *> red_pieces;
-        QVector<PieceG *> blk_pieces;
+        QVector<PieceG *> m_pieces;
 
         QPointF position(size_t i);
 

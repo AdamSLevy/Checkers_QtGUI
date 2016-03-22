@@ -8,7 +8,7 @@ CheckerBoardGUI::CheckerBoardGUI(QGraphicsItem *parent)
         if(i % 2 == (i/8) % 2){
             DarkSquare * square = new DarkSquare(this, i/8, (i%8)/2, i/2);
             square->setPos(position(i));
-            dark_squares.push_back(square);
+            m_darkSquares.push_back(square);
         }
     }
 
@@ -28,13 +28,14 @@ CheckerBoardGUI::CheckerBoardGUI(QGraphicsItem *parent)
     for(size_t i = 0; i < 32; i++){
         PieceG * piece;
         if(i < 12){
-            piece = new PieceG(dark_squares[i], i);
-            red_pieces.push_back(piece);
+            size_t id = m_pieces.size();
+            piece = new PieceG(m_darkSquares[i], id);
+            m_pieces.push_back(piece);
         } else if(i > (32-12)-1){
-            piece = new PieceG(dark_squares[i], i, BLK);
-            blk_pieces.push_back(piece);
+            size_t id = m_pieces.size();
+            piece = new PieceG(m_darkSquares[i], id, BLK);
+            m_pieces.push_back(piece);
         }
-
     }
 
 //    for(int i = 0; i < blk_pieces.size(); i++){
@@ -57,25 +58,21 @@ CheckerBoardGUI::CheckerBoardGUI(QGraphicsItem *parent)
 //        }
 //    }
 
-    for(DarkSquare * ds : dark_squares){
+    for(DarkSquare * ds : m_darkSquares){
         connect(ds, &DarkSquare::selected,
                 this, &CheckerBoardGUI::handleSquareSelected);
     }
-    for(PieceG * p : red_pieces){
-        connect(p, &PieceG::selected,
-                this, &CheckerBoardGUI::handlePieceSelected);
-    }
-    for(PieceG * p : blk_pieces){
+    for(PieceG * p : m_pieces){
         connect(p, &PieceG::selected,
                 this, &CheckerBoardGUI::handlePieceSelected);
     }
 
     for(int i = 8; i < 0xC; i++){
-        PieceG * p = (PieceG *)dark_squares[i]->childItems().first();
+        PieceG * p = (PieceG *)m_darkSquares[i]->childItems().first();
         p->setMovable(true);
     }
     for(int i = 0xC; i < 0x10; i++){
-        dark_squares[i]->setOpen(true);
+        m_darkSquares[i]->setOpen(true);
     }
 }
 
@@ -97,9 +94,9 @@ void CheckerBoardGUI::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 void CheckerBoardGUI::handleSquareSelected(size_t selectedSquare)
 {
     if(m_selectedPiece != NO_POS){
-        PieceG * p = (PieceG *)dark_squares[m_selectedPiece]->childItems().first();
+        PieceG * p = m_pieces[m_selectedPiece];
         p->setSquareID(selectedSquare);
-        p->setParentItem(dark_squares[selectedSquare]);
+        p->setParentItem(m_darkSquares[selectedSquare]);
     }
     deselectAll();
 }
@@ -112,13 +109,10 @@ void CheckerBoardGUI::handlePieceSelected(size_t selectedPiece)
 
 void CheckerBoardGUI::deselectAll()
 {
-    for(PieceG * p : red_pieces){
+    for(PieceG * p : m_pieces){
         p->deselect();
     }
-    for(PieceG * p : blk_pieces){
-        p->deselect();
-    }
-    for(DarkSquare * ds : dark_squares){
+    for(DarkSquare * ds : m_darkSquares){
         ds->deselect();
     }
     m_selectedPiece = NO_POS;
