@@ -22,6 +22,7 @@ class CheckerBoardGUI : public QGraphicsObject
         void handleSquareSelected(size_t selectedSquare);
         void handlePieceSelected(size_t selected);
         void deselectAll();
+        void closeAllSquares();
         void setBoard(BitBoard bb);
 
     private:

@@ -21,8 +21,8 @@ class PieceG : public QGraphicsObject
     Q_OBJECT
     public:
         PieceG(QGraphicsItem *parent = 0,
-               size_t squareID = NO_POS,
                size_t pieceID = NO_POS,
+               size_t squareID = NO_POS,
                bool color = RED,
                bool king = false);
 
@@ -48,8 +48,8 @@ class PieceG : public QGraphicsObject
         void setKing(bool king);
 
     private:
-        size_t m_squareID;
         size_t m_pieceID;
+        size_t m_squareID;
         bool m_color;
         bool m_king;
 

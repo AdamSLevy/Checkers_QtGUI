@@ -1,9 +1,9 @@
 #include "pieceg.hpp"
 
-PieceG::PieceG(QGraphicsItem *parent, size_t squareID, size_t pieceID, bool color, bool king)
+PieceG::PieceG(QGraphicsItem *parent, size_t pieceID, size_t squareID, bool color, bool king)
  : QGraphicsObject(parent),
-   m_squareID(squareID),
    m_pieceID(pieceID),
+   m_squareID(squareID),
    m_color(color),
    m_king(king),
    m_selected(false),
@@ -73,6 +73,7 @@ void PieceG::mousePressEvent(QGraphicsSceneMouseEvent *event)
     if (m_movable){
         if(m_selected){
             deselect();
+            emit selected(NO_POS);
         } else{
             setCursor(Qt::ClosedHandCursor);
             select();
@@ -119,8 +120,9 @@ void PieceG::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 void PieceG::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     Q_UNUSED(event)
-    setCursor(Qt::OpenHandCursor);
-    update();
+    if(m_movable){
+        setCursor(Qt::OpenHandCursor);
+    }
 }
 
 void PieceG::deselect()
