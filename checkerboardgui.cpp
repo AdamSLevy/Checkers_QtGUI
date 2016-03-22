@@ -12,51 +12,20 @@ CheckerBoardGUI::CheckerBoardGUI(QGraphicsItem *parent)
         }
     }
 
-//    for(int i = 0; i < 64; i++){
-//        if(i % 2 == (i/8) % 2){
-//            Piece * piece;
-//            if(i < 2*12){
-//                piece = new Piece(dark_squares[i/2]);
-//                red_pieces.push_back(piece);
-//            } else if(i > 2*(32-12)-1){
-//                piece = new Piece(dark_squares[i/2], BLK);
-//                blk_pieces.push_back(piece);
-//            }
-//        }
-//    }
-
     for(size_t i = 0; i < 32; i++){
         PieceG * piece;
         if(i < 12){
             size_t pieceID = m_pieces.size();
-            piece = new PieceG(m_darkSquares[i], pieceID, i);
+            piece = new PieceG(0, pieceID, i);
+            piece->setVisible(false);
             m_pieces.push_back(piece);
         } else if(i > (32-12)-1){
             size_t pieceID = m_pieces.size();
-            piece = new PieceG(m_darkSquares[i], pieceID, i, BLK);
+            piece = new PieceG(0, pieceID, i, BLK);
+            piece->setVisible(false);
             m_pieces.push_back(piece);
         }
     }
-
-//    for(int i = 0; i < blk_pieces.size(); i++){
-//        for(int j = 0; j < blk_pieces.size(); j++){
-//            if(i != j){
-//                connect(blk_pieces[i], &Piece::selected,
-//                        blk_pieces[j], &Piece::deselect);
-//            } else{
-////                connect(blk_pieces[i], &Piece::selected,
-////                        this, &CheckerBoardGUI::)
-//            }
-//        }
-//    }
-//    for(int i = 0; i < red_pieces.size(); i++){
-//        for(int j = 0; j < red_pieces.size(); j++){
-//            if(i != j){
-//                connect(red_pieces[i], &Piece::selected,
-//                        red_pieces[j], &Piece::deselect);
-//            }
-//        }
-//    }
 
     for(DarkSquare * ds : m_darkSquares){
         connect(ds, &DarkSquare::selected,
@@ -67,13 +36,14 @@ CheckerBoardGUI::CheckerBoardGUI(QGraphicsItem *parent)
                 this, &CheckerBoardGUI::handlePieceSelected);
     }
 
-    for(int i = 8; i < 0xC; i++){
-        PieceG * p = (PieceG *)m_darkSquares[i]->childItems().first();
-        p->setMovable(true);
-    }
+//    for(int i = 8; i < 0xC; i++){
+//        PieceG * p = (PieceG *)m_darkSquares[i]->childItems().first();
+//        p->setMovable(true);
+//    }
     for(int i = 0xC; i < 0x10; i++){
         m_darkSquares[i]->setOpen(true);
     }
+    setBoard(m_cb.m_bb);
 }
 
 QRectF CheckerBoardGUI::boundingRect() const
@@ -133,4 +103,44 @@ void CheckerBoardGUI::setBoard(BitBoard bb)
 {
     m_cb.m_bb = bb;
 
+    uint32_t play_pos;
+    uint32_t oppo_pos;
+
+    if (bb.turn == BLK){
+        play_pos = bb.blk_pos;
+        oppo_pos = bb.red_pos;
+    } else{
+        play_pos = bb.red_pos;
+        oppo_pos = bb.blk_pos;
+    }
+    bool turn = bb.turn;
+
+    uint32_t occupied = (play_pos | oppo_pos);
+    uint32_t empty = ~occupied;
+
+    uint32_t movers      = BCKWD(turn, empty) & play_pos;// & ~bb.king_pos;
+//    uint32_t king_movers = (BCKWD(turn, empty) | FORWD(turn, empty)) & play_pos & bb.king_pos;
+    size_t square = 0;
+    for(int i = 0; i < m_pieces.size(); i++){
+        PieceG * p = m_pieces[i];
+        static bool color = p->getColor();
+        static uint32_t board = bb.blk_pos;
+        if(color != p->getColor()){
+            board = bb.red_pos;
+            color = p->getColor();
+            square = 0;
+        }
+        for(/*size_t square*/;square < 32; square++){
+            uint32_t pos = POS_MASK[square];
+            if(pos & board){
+                p->setVisible(true);
+                p->setMovable(pos & movers);
+                p->setKing(pos & bb.king_pos);
+                p->setSquareID(square);
+                p->setParentItem(m_darkSquares[square]);
+                square++;
+                break;
+            }
+        }
+    }
 }

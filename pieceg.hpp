@@ -45,7 +45,7 @@ class PieceG : public QGraphicsObject
         void deselect();
         void setMovable(bool movable);
         void setSquareID(size_t squareID);
-        void setKing();
+        void setKing(bool king);
 
     private:
         size_t m_squareID;

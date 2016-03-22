@@ -148,10 +148,10 @@ void PieceG::setSquareID(size_t squareID)
     }
 }
 
-void PieceG::setKing()
+void PieceG::setKing(bool king)
 {
-    if(!m_king){
-        m_king = true;
+    if(m_king != king){
+        m_king = king;
         update();
     }
 }
