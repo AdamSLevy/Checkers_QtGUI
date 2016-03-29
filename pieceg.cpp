@@ -41,7 +41,11 @@ void PieceG::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
     painter->drawEllipse(center, CIRCLE_RADIUS, CIRCLE_RADIUS);
     if(m_king){
         QRect textRect(CIRCLE_RECT);
-        painter->drawText(textRect, "K");
+        QFont font = painter->font();
+        font.setBold(true);
+        font.setPixelSize(50);
+        painter->setFont(font);
+        painter->drawText(textRect, Qt::AlignCenter, "K");
     }
 }
 
