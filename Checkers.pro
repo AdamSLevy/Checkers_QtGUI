@@ -36,8 +36,6 @@ HEADERS  += mainwindow.hpp \
 
 FORMS    += mainwindow.ui
 
-QMAKE_CXXFLAGS += -Wno-inconsistent-missing-override
-
 #LIBS += -L/usr/local/lib -larmadillo
 #INCLUDEPATH += /usr/local/Cellar/armadillo/6.500.4/include
 #DEPENDPATH += /usr/local/Cellar/armadillo/6.500.4/include
