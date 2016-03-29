@@ -45,7 +45,8 @@ void DarkSquare::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void DarkSquare::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
 {
     if(m_open){
-        event->setAccepted(true);
+        event->acceptProposedAction();
+//        event->setAccepted(true);
         m_selected = true;
         update();
     }

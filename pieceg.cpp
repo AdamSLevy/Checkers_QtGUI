@@ -9,8 +9,6 @@ PieceG::PieceG(QGraphicsItem *parent, size_t pieceID, size_t squareID, bool colo
    m_selected(false),
    m_movable(false)
 {
-//    setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemSendsScenePositionChanges);
-//    setCursor(Qt::OpenHandCursor);
     setAcceptedMouseButtons(Qt::LeftButton);
 }
 
@@ -78,12 +76,13 @@ void PieceG::mousePressEvent(QGraphicsSceneMouseEvent *event)
             setCursor(Qt::ClosedHandCursor);
             select();
         }
+    } else{
+        setCursor(Qt::ArrowCursor);
     }
 }
 
 void PieceG::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    Q_UNUSED(event)
     if (!m_movable || QLineF(event->screenPos(), event->buttonDownScreenPos(Qt::LeftButton))
         .length() < QApplication::startDragDistance()) {
         return;
@@ -111,9 +110,14 @@ void PieceG::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
     drag->setPixmap(pixmap);
     drag->setHotSpot(QPoint(rect.width()/2, rect.height()/2));
+    setCursor(Qt::ClosedHandCursor);
     drag->exec();
 
-    setCursor(Qt::OpenHandCursor);
+    if(m_movable){
+        setCursor(Qt::OpenHandCursor);
+    } else{
+        setCursor(Qt::ArrowCursor);
+    }
     deselect();
 }
 
@@ -122,6 +126,8 @@ void PieceG::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     Q_UNUSED(event)
     if(m_movable){
         setCursor(Qt::OpenHandCursor);
+    } else{
+        setCursor(Qt::ArrowCursor);
     }
 }
 

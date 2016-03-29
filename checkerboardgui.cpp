@@ -177,10 +177,10 @@ void CheckerBoardGUI::setBoard(BitBoard bb, uint32_t moveMask)
             uint32_t pos = POS_MASK[square];
             if(pos & board){
                 p->setVisible(true);
-                p->setMovable(pos & movers & moveMask);
-                p->setKing(pos & bb.king_pos);
                 p->setSquareID(square);
                 p->setParentItem(m_darkSquares[square]);
+                p->setKing(pos & bb.king_pos);
+                p->setMovable(pos & movers & moveMask);
                 set = true;
                 if(square < 32){
                     square++;
@@ -203,10 +203,10 @@ void CheckerBoardGUI::setBoard(BitBoard bb, uint32_t moveMask)
             uint32_t pos = POS_MASK[square];
             if(pos & board){
                 p->setVisible(true);
-                p->setMovable(pos & movers & moveMask);
-                p->setKing(pos & bb.king_pos);
                 p->setSquareID(square);
                 p->setParentItem(m_darkSquares[square]);
+                p->setKing(pos & bb.king_pos);
+                p->setMovable(pos & movers & moveMask);
                 set = true;
                 if(square < 32){
                     square++;
