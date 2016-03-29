@@ -36,18 +36,12 @@ CheckerBoardGUI::CheckerBoardGUI(QGraphicsItem *parent)
                 this, &CheckerBoardGUI::handlePieceSelected);
     }
 
-//    for(int i = 8; i < 0xC; i++){
-//        PieceG * p = (PieceG *)m_darkSquares[i]->childItems().first();
-//        p->setMovable(true);
-//    }
+    m_cb.m_bb = from_string("rrrrrR_rR__R__B__rr____B__Bbbbbb", BLK);
     setBoard(m_cb.m_bb);
 }
 
 QRectF CheckerBoardGUI::boundingRect() const
 {
-//    QSizeF rectSize = light_squares.first()->boundingRect().size();
-//    return QRectF(-4 * rectSize.width(), -4 * rectSize.height(), 8 * rectSize.width(), 8 * rectSize.height());
-//    return QRectF(0,0, 8 * rectSize.width(), 8 * rectSize.height());
     return QRectF();
 }
 
@@ -80,10 +74,14 @@ void CheckerBoardGUI::handleSquareSelected(size_t selectedSquare)
         uint32_t moveMask  = 0xffFFffFF;
 
         bool turn = bb.turn;
-        bool isJumper = piecePOS & get_jumpers(bb,p->isKing());
+        bool isKing   = p->isKing();
+        bool isJumper = piecePOS & get_jumpers(bb,isKing);
 
         // Move the piece
         play_pos = (play_pos & ~piecePOS) | squarePOS;
+        if(isKing){
+            bb.king_pos = (bb.king_pos & ~piecePOS) | squarePOS;
+        }
 
         // Capture opponent piece
         if(isJumper){
@@ -92,12 +90,17 @@ void CheckerBoardGUI::handleSquareSelected(size_t selectedSquare)
             oppo_pos &= ~captured;
             moveMask = squarePOS;
         }
-        if(!isJumper || !(get_jumpers(bb, p->isKing()) & POS_MASK[selectedSquare])){
-            turn = !turn;
-            moveMask = 0xffFFffFF;
+
+        // King me
+        bool kinged = false;
+        if(!isKing){
+            kinged = squarePOS & KING_ME_ROW_MASK(turn);
+            if(kinged){
+                bb.king_pos |= squarePOS;
+            }
         }
 
-
+        // Apply to BitBoard
         if(bb.turn == BLK){
             bb.blk_pos = play_pos;
             bb.red_pos = oppo_pos;
@@ -105,9 +108,22 @@ void CheckerBoardGUI::handleSquareSelected(size_t selectedSquare)
             bb.blk_pos = oppo_pos;
             bb.red_pos = play_pos;
         }
+        // End the move
+        if(isJumper){
+            uint32_t jumpers = get_jumpers(bb, isKing);
+            qDebug() << "squareSelected";
+            qDebug() << "isKing " << isKing;
+            qDebug() << "jumpers";
+            print_board(jumpers);
+        }
+        if(!isJumper || kinged || !(get_jumpers(bb, isKing) & squarePOS)){
+            turn = !turn;
+            moveMask = 0xffFFffFF;
+        }
 
         bb.turn = turn;
 
+        // Update GUI
         setBoard(bb, moveMask);
     }
     deselectAll();
