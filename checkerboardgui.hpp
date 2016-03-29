@@ -23,7 +23,7 @@ class CheckerBoardGUI : public QGraphicsObject
         void handlePieceSelected(size_t selected);
         void deselectAll();
         void closeAllSquares();
-        void setBoard(BitBoard bb);
+        void setBoard(BitBoard bb, uint32_t moveMask = 0xffFFffFF);
 
     private:
         QVector<DarkSquare *>  m_darkSquares;

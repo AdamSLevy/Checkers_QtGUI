@@ -62,20 +62,41 @@ void CheckerBoardGUI::handleSquareSelected(size_t selectedSquare)
 {
     if(m_selectedPiece != NO_POS){
         BitBoard bb = m_cb.m_bb;
-        size_t piecePOS = m_pieces[m_selectedPiece]->getSquareID();
+        bool turn = bb.turn;
+        PieceG * p = m_pieces[m_selectedPiece];
+        size_t piecePOS = p->getSquareID();
+        bool isJumper = POS_MASK[piecePOS] & get_jumpers(bb,p->isKing());
+        uint32_t moveMask = 0xffFFffFF;
+        if(isJumper){
+            qDebug() << "Jump!";
+        }
         if(bb.turn == BLK){
             bb.blk_pos = (bb.blk_pos & ~POS_MASK[piecePOS]) | POS_MASK[selectedSquare];
-            bb.turn = RED;
+            if(isJumper){
+                uint32_t captured = FORWD(turn, POS_MASK[piecePOS]) & BCKWD(turn, POS_MASK[selectedSquare]);
+                print_board(captured);
+                bb.red_pos = bb.red_pos & ~captured;
+                moveMask = POS_MASK[selectedSquare];
+            }
+            if(!isJumper || !(get_jumpers(bb, p->isKing()) & POS_MASK[selectedSquare])){
+                bb.turn = RED;
+                moveMask = 0xffFFffFF;
+            }
         } else{
             bb.red_pos = (bb.red_pos & ~POS_MASK[piecePOS]) | POS_MASK[selectedSquare];
-            print_board(bb.red_pos);
-            bb.turn = BLK;
+            if(isJumper){
+                uint32_t captured = FORWD(turn, POS_MASK[piecePOS]) & BCKWD(turn, POS_MASK[selectedSquare]);
+                print_board(captured);
+                bb.blk_pos = bb.blk_pos & ~captured;
+                moveMask = POS_MASK[selectedSquare];
+            }
+            if(!isJumper || !(get_jumpers(bb, p->isKing()) & POS_MASK[selectedSquare])){
+                bb.turn = BLK;
+                moveMask = 0xffFFffFF;
+            }
         }
 
-        setBoard(bb);
-//        PieceG * p = m_pieces[m_selectedPiece];
-//        p->setSquareID(selectedSquare);
-//        p->setParentItem(m_darkSquares[selectedSquare]);
+        setBoard(bb, moveMask);
     }
     deselectAll();
 }
@@ -85,15 +106,16 @@ void CheckerBoardGUI::handlePieceSelected(size_t selectedPiece)
     deselectAll();
     m_selectedPiece = selectedPiece;
     if(m_selectedPiece < m_pieces.size()){
-        // Open valid squares
-        bool turn = m_cb.m_bb.turn;
-
-        uint32_t occupied = (m_cb.m_bb.red_pos | m_cb.m_bb.blk_pos);
-        uint32_t empty = ~occupied;
-
-        size_t squareID = m_pieces[m_selectedPiece]->getSquareID();
-        uint32_t pos = POS_MASK[squareID];
-        uint32_t available = FORWD(turn, pos) & empty;
+        PieceG * p = m_pieces[m_selectedPiece];
+        bool isKing = p->isKing();
+        BitBoard bb = m_cb.m_bb;
+        uint32_t jump_loc = get_jump_locations(bb, isKing, POS_MASK[p->getSquareID()]);
+        uint32_t available = 0;
+        if(jump_loc){
+            available = jump_loc;
+        } else{
+            available = get_move_locations(m_cb.m_bb, isKing, POS_MASK[p->getSquareID()]);
+        }
         for(int square = 0; square < 32; square++){
             m_darkSquares[square]->setOpen(POS_MASK[square] & available);
         }
@@ -130,71 +152,71 @@ QPointF CheckerBoardGUI::position(size_t i)
 }
 
 
-void CheckerBoardGUI::setBoard(BitBoard bb)
+void CheckerBoardGUI::setBoard(BitBoard bb, uint32_t moveMask)
 {
     m_cb.m_bb = bb;
+
     print_bb(bb);
 
-    uint32_t play_pos;
-    uint32_t oppo_pos;
-
-    if (bb.turn == BLK){
-        play_pos = bb.blk_pos;
-        oppo_pos = bb.red_pos;
+    uint32_t jumpers = get_jumpers(bb) | get_jumpers(bb, true);
+    uint32_t movers = 0;
+    if(jumpers){
+        movers = jumpers;
     } else{
-        play_pos = bb.red_pos;
-        oppo_pos = bb.blk_pos;
+        movers = get_movers(bb) | get_movers(bb, true);
     }
-    bool turn = bb.turn;
 
-    uint32_t occupied = (play_pos | oppo_pos);
-    uint32_t empty = ~occupied;
-
-    uint32_t movers      = BCKWD(turn, empty) & play_pos;// & ~bb.king_pos;
-//    uint32_t king_movers = (BCKWD(turn, empty) | FORWD(turn, empty)) & play_pos & bb.king_pos;
     size_t square = 0;
     int i = 0;
-    for(; i < m_pieces.size()/2; i++){
+    for(/*i*/; i < m_pieces.size()/2; i++){
         PieceG * p = m_pieces[i];
         uint32_t board = bb.red_pos;
+        bool set = false;
 
-        if(square == 32){
-            p->setParent(this);
-            p->setVisible(false);
-        }
         for(/*size_t square*/;square < 32; square++){
             uint32_t pos = POS_MASK[square];
             if(pos & board){
                 p->setVisible(true);
-                p->setMovable(pos & movers);
+                p->setMovable(pos & movers & moveMask);
                 p->setKing(pos & bb.king_pos);
                 p->setSquareID(square);
                 p->setParentItem(m_darkSquares[square]);
-                square++;
+                set = true;
+                if(square < 32){
+                    square++;
+                }
                 break;
             }
+        }
+        if(!set){
+            p->setParent(this);
+            p->setVisible(false);
         }
     }
     square = 0;
     for(; i < m_pieces.size(); i++){
         PieceG * p = m_pieces[i];
         uint32_t board = bb.blk_pos;
+        bool set = false;
 
-        if(square == 32){
-            p->setParent(this);
-            p->setVisible(false);
-        }
         for(/*size_t square*/;square < 32; square++){
             uint32_t pos = POS_MASK[square];
             if(pos & board){
                 p->setVisible(true);
-                p->setMovable(pos & movers);
+                p->setMovable(pos & movers & moveMask);
                 p->setKing(pos & bb.king_pos);
                 p->setSquareID(square);
                 p->setParentItem(m_darkSquares[square]);
-                square++;
+                set = true;
+                if(square < 32){
+                    square++;
+                }
                 break;
             }
+        }
+        if(!set){
+            p->setParent(this);
+            p->setVisible(false);
         }
     }
 }
