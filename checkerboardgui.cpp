@@ -86,6 +86,9 @@ void CheckerBoardGUI::handleSquareSelected(size_t selectedSquare)
         // Capture opponent piece
         if(isJumper){
             uint32_t captured = FORWD(turn, piecePOS) & BCKWD(turn, squarePOS);
+            if(isKing){
+                captured |= BCKWD(turn, piecePOS) & FORWD(turn, squarePOS);
+            }
             print_board(captured);
             oppo_pos &= ~captured;
             moveMask = squarePOS;
