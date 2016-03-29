@@ -62,39 +62,51 @@ void CheckerBoardGUI::handleSquareSelected(size_t selectedSquare)
 {
     if(m_selectedPiece != NO_POS){
         BitBoard bb = m_cb.m_bb;
-        bool turn = bb.turn;
-        PieceG * p = m_pieces[m_selectedPiece];
-        size_t piecePOS = p->getSquareID();
-        bool isJumper = POS_MASK[piecePOS] & get_jumpers(bb,p->isKing());
-        uint32_t moveMask = 0xffFFffFF;
-        if(isJumper){
-            qDebug() << "Jump!";
-        }
-        if(bb.turn == BLK){
-            bb.blk_pos = (bb.blk_pos & ~POS_MASK[piecePOS]) | POS_MASK[selectedSquare];
-            if(isJumper){
-                uint32_t captured = FORWD(turn, POS_MASK[piecePOS]) & BCKWD(turn, POS_MASK[selectedSquare]);
-                print_board(captured);
-                bb.red_pos = bb.red_pos & ~captured;
-                moveMask = POS_MASK[selectedSquare];
-            }
-            if(!isJumper || !(get_jumpers(bb, p->isKing()) & POS_MASK[selectedSquare])){
-                bb.turn = RED;
-                moveMask = 0xffFFffFF;
-            }
+        uint32_t play_pos;
+        uint32_t oppo_pos;
+
+        if (bb.turn == BLK){
+            play_pos = bb.blk_pos;
+            oppo_pos = bb.red_pos;
         } else{
-            bb.red_pos = (bb.red_pos & ~POS_MASK[piecePOS]) | POS_MASK[selectedSquare];
-            if(isJumper){
-                uint32_t captured = FORWD(turn, POS_MASK[piecePOS]) & BCKWD(turn, POS_MASK[selectedSquare]);
-                print_board(captured);
-                bb.blk_pos = bb.blk_pos & ~captured;
-                moveMask = POS_MASK[selectedSquare];
-            }
-            if(!isJumper || !(get_jumpers(bb, p->isKing()) & POS_MASK[selectedSquare])){
-                bb.turn = BLK;
-                moveMask = 0xffFFffFF;
-            }
+            play_pos = bb.red_pos;
+            oppo_pos = bb.blk_pos;
         }
+
+        PieceG * p = m_pieces[m_selectedPiece];
+
+        uint32_t piecePOS  = POS_MASK[p->getSquareID()];
+        uint32_t squarePOS = POS_MASK[selectedSquare];
+        uint32_t moveMask  = 0xffFFffFF;
+
+        bool turn = bb.turn;
+        bool isJumper = piecePOS & get_jumpers(bb,p->isKing());
+
+        // Move the piece
+        play_pos = (play_pos & ~piecePOS) | squarePOS;
+
+        // Capture opponent piece
+        if(isJumper){
+            uint32_t captured = FORWD(turn, piecePOS) & BCKWD(turn, squarePOS);
+            print_board(captured);
+            oppo_pos &= ~captured;
+            moveMask = squarePOS;
+        }
+        if(!isJumper || !(get_jumpers(bb, p->isKing()) & POS_MASK[selectedSquare])){
+            turn = !turn;
+            moveMask = 0xffFFffFF;
+        }
+
+
+        if(bb.turn == BLK){
+            bb.blk_pos = play_pos;
+            bb.red_pos = oppo_pos;
+        } else{
+            bb.blk_pos = oppo_pos;
+            bb.red_pos = play_pos;
+        }
+
+        bb.turn = turn;
 
         setBoard(bb, moveMask);
     }
