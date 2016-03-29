@@ -111,10 +111,6 @@ void CheckerBoardGUI::handleSquareSelected(size_t selectedSquare)
         // End the move
         if(isJumper){
             uint32_t jumpers = get_jumpers(bb, isKing);
-            qDebug() << "squareSelected";
-            qDebug() << "isKing " << isKing;
-            qDebug() << "jumpers";
-            print_board(jumpers);
         }
         if(!isJumper || kinged || !(get_jumpers(bb, isKing) & squarePOS)){
             turn = !turn;
