@@ -1,7 +1,7 @@
 #include "darksquare.hpp"
 
 DarkSquare::DarkSquare(QGraphicsItem *parent, size_t row, size_t col, size_t id)
-    : QGraphicsObject(parent), m_row(row), m_col(col), m_id(id), m_piece(0), m_selected(false), m_open(false)
+    : QGraphicsObject(parent), m_row(row), m_col(col), m_id(id), m_piece(0), m_open(false), m_selected(false)
 {
     setAcceptDrops(true);
 }
