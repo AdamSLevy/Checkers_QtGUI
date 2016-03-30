@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QGraphicsScene>
+#include <QMessageBox>
 
 #include "checkerboardgui.hpp"
 
@@ -17,6 +18,11 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
+public slots:
+    void handleWin(bool winner);
+    void handleTurn(bool turn);
+
 
 private:
     Ui::MainWindow *ui;
