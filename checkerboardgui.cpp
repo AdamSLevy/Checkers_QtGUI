@@ -36,8 +36,8 @@ CheckerBoardGUI::CheckerBoardGUI(QGraphicsItem *parent)
                 this, &CheckerBoardGUI::handlePieceSelected);
     }
 
-    m_cb.m_bb = from_string("rrrrrR_rR__R__B__rr____B__Bbbbbb", BLK);
-    setBoard(m_cb.m_bb);
+    m_bb = from_string("rrrrrR_rR__R__B__rr____B__Bbbbbb", BLK);
+    setBoard(m_bb);
 }
 
 QRectF CheckerBoardGUI::boundingRect() const
@@ -55,7 +55,7 @@ void CheckerBoardGUI::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 void CheckerBoardGUI::handleSquareSelected(size_t selectedSquare)
 {
     if(m_selectedPiece != NO_POS){
-        BitBoard bb = m_cb.m_bb;
+        BitBoard bb = m_bb;
         uint32_t play_pos;
         uint32_t oppo_pos;
 
@@ -89,7 +89,6 @@ void CheckerBoardGUI::handleSquareSelected(size_t selectedSquare)
             if(isKing){
                 captured |= BCKWD(turn, piecePOS) & FORWD(turn, squarePOS);
             }
-            print_board(captured);
             oppo_pos &= ~captured;
             moveMask = squarePOS;
         }
@@ -112,9 +111,6 @@ void CheckerBoardGUI::handleSquareSelected(size_t selectedSquare)
             bb.red_pos = play_pos;
         }
         // End the move
-        if(isJumper){
-            uint32_t jumpers = get_jumpers(bb, isKing);
-        }
         if(!isJumper || kinged || !(get_jumpers(bb, isKing) & squarePOS)){
             turn = !turn;
             moveMask = 0xffFFffFF;
@@ -135,13 +131,13 @@ void CheckerBoardGUI::handlePieceSelected(size_t selectedPiece)
     if(m_selectedPiece < m_pieces.size()){
         PieceG * p = m_pieces[m_selectedPiece];
         bool isKing = p->isKing();
-        BitBoard bb = m_cb.m_bb;
+        BitBoard bb = m_bb;
         uint32_t jump_loc = get_jump_locations(bb, isKing, POS_MASK[p->getSquareID()]);
         uint32_t available = 0;
         if(jump_loc){
             available = jump_loc;
         } else{
-            available = get_move_locations(m_cb.m_bb, isKing, POS_MASK[p->getSquareID()]);
+            available = get_move_locations(m_bb, isKing, POS_MASK[p->getSquareID()]);
         }
         for(int square = 0; square < 32; square++){
             m_darkSquares[square]->setOpen(POS_MASK[square] & available);
@@ -181,7 +177,18 @@ QPointF CheckerBoardGUI::position(size_t i)
 
 void CheckerBoardGUI::setBoard(BitBoard bb, uint32_t moveMask)
 {
-    m_cb.m_bb = bb;
+
+    if(bb.turn != m_bb.turn)
+    {
+        m_children = gen_children(bb);
+        if(m_children.size() == 0){
+            emit win(!bb.turn);
+        } else{
+            emit turn(bb.turn);
+        }
+    }
+
+    m_bb = bb;
 
     print_bb(bb);
 
@@ -246,5 +253,24 @@ void CheckerBoardGUI::setBoard(BitBoard bb, uint32_t moveMask)
             p->setVisible(false);
         }
     }
+}
+
+void CheckerBoardGUI::resetBoard()
+{
+    BitBoard bb;
+    setBoard(bb);
+}
+
+bool CheckerBoardGUI::makeMove(BitBoard bb)
+{
+    bool valid = false;
+    for(BitBoard b : m_children){
+        if(b == bb){
+            valid = true;
+            setBoard(bb);
+            break;
+        }
+    }
+    return valid;
 }
 

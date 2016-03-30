@@ -10,6 +10,7 @@
 
 class CheckerBoardGUI : public QGraphicsObject
 {
+    Q_OBJECT
     public:
         CheckerBoardGUI(QGraphicsItem *parent = 0);
 
@@ -17,6 +18,8 @@ class CheckerBoardGUI : public QGraphicsObject
         void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
     signals:
+        void win(bool winner);
+        void turn(bool turn);
 
     public slots:
         void handleSquareSelected(size_t selectedSquare);
@@ -24,6 +27,10 @@ class CheckerBoardGUI : public QGraphicsObject
         void deselectAll();
         void closeAllSquares();
         void setBoard(BitBoard bb, uint32_t moveMask = 0xffFFffFF);
+        void resetBoard();
+
+    public:
+        bool makeMove(BitBoard bb);
 
     private:
         QVector<DarkSquare *>  m_darkSquares;
@@ -34,7 +41,8 @@ class CheckerBoardGUI : public QGraphicsObject
 
         size_t m_selectedPiece;
 
-        CheckerBoard m_cb;
+        BitBoard m_bb;
+        vector<BitBoard> m_children;
 };
 
 #endif // CHECKERBOARD_H
