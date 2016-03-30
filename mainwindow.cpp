@@ -20,11 +20,18 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->graphicsView->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
 
     connect(ui->resetGame, &QPushButton::clicked,
-            board, &CheckerBoardGUI::resetBoard);
+            this, &MainWindow::handleResetBoard);
     connect(board, &CheckerBoardGUI::win,
             this, &MainWindow::handleWin);
     connect(board, &CheckerBoardGUI::turn,
             this, &MainWindow::handleTurn);
+    connect(ui->undo, &QPushButton::clicked,
+            this, &MainWindow::handleUndo);
+
+
+    m_currentBB.red_pos = 0;
+    m_currentBB.blk_pos = 0;
+    board->resetBoard();
 }
 
 MainWindow::~MainWindow()
@@ -45,16 +52,56 @@ void MainWindow::handleWin(bool winner)
     }
     winMsg.setInformativeText(winnerString + " wins!");
     winMsg.exec();
+    m_gameHistory.clear();
+    m_currentBB.red_pos = 0;
+    m_currentBB.blk_pos = 0;
+    ui->undo->setEnabled(false);
     board->resetBoard();
 }
 
-void MainWindow::handleTurn(bool turn)
+void MainWindow::handleTurn(BitBoard bb)
 {
     QString playerString;
-    if(turn == BLK){
+    if(bb.turn == BLK){
         playerString = "Black";
     } else{
         playerString = "Red";
     }
     ui->statusBar->showMessage(playerString + "'s turn");
+
+    if(m_currentBB.blk_pos != 0 && m_currentBB.red_pos != 0){
+        m_gameHistory.push_back(m_currentBB);
+    }
+    m_currentBB = bb;
+    if(m_gameHistory.size() > 0){
+        ui->undo->setEnabled(true);
+    } else{
+        ui->undo->setEnabled(false);
+    }
+    for(BitBoard b:m_gameHistory){
+        print_bb(b);
+    }
+    print_bb(m_currentBB);
+}
+
+void MainWindow::handleResetBoard()
+{
+    m_gameHistory.clear();
+    m_currentBB.red_pos = 0;
+    m_currentBB.blk_pos = 0;
+    board->resetBoard();
+}
+
+void MainWindow::handleUndo()
+{
+    if(m_gameHistory.size() > 0){
+        m_currentBB.red_pos = 0;
+        m_currentBB.blk_pos = 0;
+        BitBoard last = m_gameHistory.last();
+        m_gameHistory.pop_back();
+        if(m_gameHistory.size() == 0){
+            ui->undo->setEnabled(false);
+        }
+        board->setBoard(last);
+    }
 }

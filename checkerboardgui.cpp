@@ -36,7 +36,7 @@ CheckerBoardGUI::CheckerBoardGUI(QGraphicsItem *parent)
                 this, &CheckerBoardGUI::handlePieceSelected);
     }
 
-    m_bb = from_string("rrrrrR_rR__R__B__rr____B__Bbbbbb", BLK);
+//    m_bb = from_string("rrrrrR_rR__R__B__rr____B__Bbbbbb", BLK);
     setBoard(m_bb);
 }
 
@@ -177,17 +177,6 @@ QPointF CheckerBoardGUI::position(size_t i)
 
 void CheckerBoardGUI::setBoard(BitBoard bb, uint32_t moveMask)
 {
-
-    if(bb.turn != m_bb.turn)
-    {
-        m_children = gen_children(bb);
-        if(m_children.size() == 0){
-            emit win(!bb.turn);
-        } else{
-            emit turn(bb.turn);
-        }
-    }
-
     m_bb = bb;
 
     print_bb(bb);
@@ -251,6 +240,15 @@ void CheckerBoardGUI::setBoard(BitBoard bb, uint32_t moveMask)
         if(!set){
             p->setParent(this);
             p->setVisible(false);
+        }
+    }
+
+    if(moveMask == 0xffFFffFF){
+        m_children = gen_children(bb);
+        if(m_children.size() == 0){
+            emit win(!bb.turn);
+        } else{
+            emit turn(bb);
         }
     }
 }

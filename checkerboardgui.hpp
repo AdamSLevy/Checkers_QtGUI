@@ -19,7 +19,7 @@ class CheckerBoardGUI : public QGraphicsObject
 
     signals:
         void win(bool winner);
-        void turn(bool turn);
+        void turn(BitBoard bb);
 
     public slots:
         void handleSquareSelected(size_t selectedSquare);

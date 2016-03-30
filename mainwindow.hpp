@@ -21,7 +21,9 @@ public:
 
 public slots:
     void handleWin(bool winner);
-    void handleTurn(bool turn);
+    void handleTurn(BitBoard bb);
+    void handleResetBoard();
+    void handleUndo();
 
 
 private:
@@ -29,6 +31,8 @@ private:
 
     QGraphicsScene * scene;
     CheckerBoardGUI * board;
+    QVector<BitBoard> m_gameHistory;
+    BitBoard m_currentBB;
 };
 
 #endif // MAINWINDOW_H
