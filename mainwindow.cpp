@@ -18,6 +18,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->graphicsView->setScene(scene);
     ui->graphicsView->setRenderHint(QPainter::Antialiasing);
     ui->graphicsView->setViewportUpdateMode(QGraphicsView::BoundingRectViewportUpdate);
+
+    connect(ui->resetGame, &QPushButton::clicked,
+            board, &CheckerBoardGUI::resetBoard);
 }
 
 MainWindow::~MainWindow()
