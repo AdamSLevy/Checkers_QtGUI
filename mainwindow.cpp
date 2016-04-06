@@ -78,10 +78,12 @@ void MainWindow::handleTurn(BitBoard bb)
     } else{
         ui->undo->setEnabled(false);
     }
-    for(BitBoard b:m_gameHistory){
-        print_bb(b);
-    }
-    print_bb(m_currentBB);
+
+    size_t redCount = bit_count(m_currentBB.red_pos);
+    size_t blkCount = bit_count(m_currentBB.blk_pos);
+
+    ui->redVal->setText(QString("%1").arg(redCount));
+    ui->blkVal->setText(QString("%1").arg(blkCount));
 }
 
 void MainWindow::handleResetBoard()
